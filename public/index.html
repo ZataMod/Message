@@ -151,13 +151,13 @@
         formData.append('fileToUpload', musicFile);
         formData.append('reqtype', 'fileupload');
 
-        fetch("https://catbox.moe/user/api.php", {
+        fetch("/api/upload", {
           method: "POST",
           body: formData
         })
-        .then(res => res.text())
-        .then(url => {
-          createLink(page, letters, url);
+        .then(res => res.json())
+        .then(data => {
+          createLink(page, letters, data.files[0].url);
         })
         .catch(err => {
           alert("Lỗi khi upload nhạc: " + err.message);
@@ -183,9 +183,8 @@
       }
 
       document.getElementById("output").innerHTML =
-        `<strong>🔗 Link đã tạo:</strong><br><a href="${link}" target="_blank" style="color:#ff69b4">${link}</a>`;
+        `<strong>Link đã tạo:</strong><br><a href="${link}" target="_blank" style="color:#ff69b4">${link}</a>`;
 
-      // Tạo QR mới
       const qrDiv = document.getElementById("qrcode");
       qrDiv.innerHTML = "";
       new QRCode(qrDiv, {
@@ -210,7 +209,7 @@
       const qrCanvas = document.querySelector("#qrcode canvas");
       if (!qrCanvas) return alert("Chưa có QR để tải!");
       const link = document.createElement("a");
-      link.download = "QR-Cute.png";
+      link.download = "QR.png";
       link.href = qrCanvas.toDataURL("image/png");
       link.click();
     }
