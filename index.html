@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chữ Rơi & Nhạc</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+    }
+
+    #startButton {
+      position: absolute;
+      z-index: 999;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px 40px;
+      font-size: 20px;
+      background: white;
+      color: black;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 20px white;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+    }
+
+    .falling-text {
+      position: absolute;
+      top: -50px;
+      font-size: 24px;
+      font-weight: bold;
+      font-family: 'Arial', sans-serif;
+      animation: fall linear forwards;
+      z-index: 2;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(110vh);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button id="startButton">Bắt đầu</button>
+  <canvas id="stars" style="display:none;"></canvas>
+  <audio id="bgmusic" loop></audio>
+
+  <script>
+    const startBtn = document.getElementById('startButton');
+    const canvas = document.getElementById('stars');
+    const ctx = canvas.getContext('2d');
+    const music = document.getElementById('bgmusic');
+    let letters = ['♥', 'I Love You', '✨'];
+    music.src = "https://files.catbox.moe/vcjdqr.mp3";
+    const params = new URLSearchParams(location.search);
+    if (params.get("letters")) letters = params.get("letters").split(',');
+    if (params.get("music")) music.src = params.get("music");
+
+    function randomColor() {
+      const colors = ['#ff69b4', '#00ffff', '#ffff00', '#00ff00', '#ff6600', '#ffffff', '#ff00ff'];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    function createFallingText() {
+      const text = document.createElement("div");
+      text.className = "falling-text";
+      text.style.left = Math.random() * window.innerWidth + "px";
+      text.style.animationDuration = (3 + Math.random() * 4) + "s";
+      const char = letters[Math.floor(Math.random() * letters.length)];
+      const color = randomColor();
+      text.textContent = char;
+      text.style.color = color;
+      text.style.textShadow = `0 0 8px ${color}, 0 0 15px ${color}`;
+      document.body.appendChild(text);
+      setTimeout(() => text.remove(), 8000);
+    }
+
+    function startStarAnimation() {
+      let w = canvas.width = window.innerWidth;
+      let h = canvas.height = window.innerHeight;
+      const stars = [];
+      for (let i = 0; i < 150; i++) {
+        stars.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: Math.random() * 1.5 + 0.5,
+          dx: (Math.random() - 0.5) * 0.3,
+          dy: (Math.random() - 0.5) * 0.3
+        });
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = "white";
+        stars.forEach(star => {
+          star.x += star.dx;
+          star.y += star.dy;
+          if (star.x < 0) star.x = w;
+          if (star.x > w) star.x = 0;
+          if (star.y < 0) star.y = h;
+          if (star.y > h) star.y = 0;
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+      window.addEventListener('resize', () => {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      });
+    }
+
+    startBtn.onclick = () => {
+      startBtn.style.display = "none";
+      canvas.style.display = "block";
+      music.play();
+      startStarAnimation();
+      setInterval(createFallingText, 300);
+    };
+  </script>
+</body>
+</html>
