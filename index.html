@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Tạo Link & QR</title>
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
   <style>
     body {
       background: #fff0f5;
@@ -130,7 +129,7 @@
   <button onclick="generate()">Tạo link + QR</button>
 
   <div id="output"></div>
-  <div id="qrcode"></div>
+  <img id="qrcode" src=""></img>
   <button onclick="copy()">Copy Link</button>
   <button class="qr-download" onclick="downloadQR()">Tải QR xuống</button>
 
@@ -143,7 +142,7 @@
     function generate() {
       const lettersRaw = document.getElementById("letters").value;
       const musicFile = document.getElementById("musicFile").files[0];
-      const page = "https://zatamod.github.io/Message/page.html";
+      const page = "https://vinh-message.vercel.app/page.html";
       const letters = lettersRaw.split(",").map(s => s.trim()).filter(Boolean);
 
       if (musicFile) {
@@ -185,16 +184,7 @@
       document.getElementById("output").innerHTML =
         `<strong>Link đã tạo:</strong><br><a href="${link}" target="_blank" style="color:#ff69b4">${link}</a>`;
 
-      const qrDiv = document.getElementById("qrcode");
-      qrDiv.innerHTML = "";
-      new QRCode(qrDiv, {
-        text: link,
-        width: 180,
-        height: 180,
-        colorDark: "#ff69b4",
-        colorLight: "#fff0f5",
-        correctLevel: QRCode.CorrectLevel.H
-      });
+      document.getElementById("qrcode").src = "https://api.qrserver.com/v1/create-qr-code/?data=${link}&color=FF69B4";
     }
 
     function copy() {
@@ -204,14 +194,18 @@
         alert("Đã copy link!");
       });
     }
-
     function downloadQR() {
-      const qrCanvas = document.querySelector("#qrcode canvas");
-      if (!qrCanvas) return alert("Chưa có QR để tải!");
-      const link = document.createElement("a");
-      link.download = "QR.png";
-      link.href = qrCanvas.toDataURL("image/png");
-      link.click();
+      const qr = document.getElementById("qrcode");
+      fetch(qr.src)
+        .then(res => res.blob())
+        .then(blob => {
+          const url = URL.createObjectURL(blob);
+          const dl = document.createElement("a");
+          dl.href = url;
+          dl.download = "qr.png";
+          dl.click();
+          URL.revokeObjectURL(url);
+        })
     }
   </script>
 </body>
