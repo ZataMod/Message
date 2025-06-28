@@ -184,7 +184,7 @@
       document.getElementById("output").innerHTML =
         `<strong>Link đã tạo:</strong><br><a href="${link}" target="_blank" style="color:#ff69b4">${link}</a>`;
 
-      document.getElementById("qrcode").src = "https://api.qrserver.com/v1/create-qr-code/?data=${link}&color=FF69B4";
+      document.getElementById("qrcode").src = "https://api.qrserver.com/v1/create-qr-code/?data="+link+"&color=FF69B4";
     }
 
     function copy() {
