@@ -1,142 +1,219 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chữ Rơi & Nhạc</title>
+  <title>Tạo Link & QR</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: black;
-      overflow: hidden;
-      height: 100%;
-      width: 100%;
+    body {
+      background: #fff0f5;
+      color: #333;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+      text-align: center;
     }
 
-    #startButton {
-      position: absolute;
-      z-index: 999;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      padding: 20px 40px;
-      font-size: 20px;
-      background: white;
-      color: black;
-      border: none;
+    input[type="text"], button {
+      padding: 10px;
+      font-size: 16px;
+      width: 90%;
+      margin-top: 10px;
+      border: 2px solid #ddd;
       border-radius: 10px;
+    }
+
+    button {
+      background-color: #ff99cc;
+      color: white;
+      border: none;
       cursor: pointer;
-      box-shadow: 0 0 20px white;
+      transition: 0.3s;
     }
 
-    canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 0;
+    button:hover {
+      background-color: #ff66b2;
     }
 
-    .falling-text {
-      position: absolute;
-      top: -50px;
-      font-size: 24px;
-      font-weight: bold;
-      font-family: 'Arial', sans-serif;
-      animation: fall linear forwards;
-      z-index: 2;
+    #output {
+      background: white;
+      padding: 10px;
+      margin-top: 20px;
+      border-radius: 10px;
+      word-break: break-word;
     }
 
-    @keyframes fall {
-      to {
-        transform: translateY(110vh);
-        opacity: 0;
-      }
+    #qrcode {
+      margin-top: 20px;
+    }
+
+    #musicFile {
+      display: none;
+    }
+
+    .upload-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #ffccdd;
+      color: #333;
+      font-size: 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      border: 2px dashed #ff99cc;
+      transition: 0.3s;
+    }
+
+    .upload-label:hover {
+      background-color: #ffe6f0;
+      border-color: #ff66b2;
+    }
+
+    .upload-label svg {
+      width: 24px;
+      height: 24px;
+      fill: #ff66b2;
+    }
+
+    #filename {
+      margin-top: 8px;
+      font-style: italic;
+      color: #aa0077;
+    }
+
+    .qr-download {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #ffccdd;
+      color: #333;
+      font-size: 16px;
+      border-radius: 12px;
+      border: 2px solid #ff99cc;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .qr-download:hover {
+      background-color: #ffe6f0;
+      border-color: #ff66b2;
     }
   </style>
 </head>
 <body>
-  <button id="startButton">Bắt đầu</button>
-  <canvas id="stars" style="display:none;"></canvas>
-  <audio id="bgmusic" loop></audio>
+  <h2>✨ Tạo Link + Mã QR ✨</h2>
+
+  <input type="text" id="letters" placeholder="Nhập thông điệp">
+
+  <label for="musicFile" class="upload-label">
+    <svg viewBox="0 0 184.69 184.69" xmlns="http://www.w3.org/2000/svg">
+      <path d="M149.968,50.186c-8.017-14.308-23.796-22.515-40.717-19.813
+        C102.609,16.43,88.713,7.576,73.087,7.576c-22.117,0-40.112,17.994-40.112,40.115c0,0.913,0.036,1.854,0.118,2.834
+        C14.004,54.875,0,72.11,0,91.959c0,23.456,19.082,42.535,42.538,42.535h33.623v-7.025H42.538
+        c-19.583,0-35.509-15.929-35.509-35.509c0-17.526,13.084-32.621,30.442-35.105c0.931-0.132,1.768-0.633,2.326-1.392
+        c0.555-0.755,0.795-1.704,0.644-2.63c-0.297-1.904-0.447-3.582-0.447-5.139c0-18.249,14.852-33.094,33.094-33.094
+        c13.703,0,25.789,8.26,30.803,21.04c0.63,1.621,2.351,2.534,4.058,2.14c15.425-3.568,29.919,3.883,36.604,17.168
+        c0.508,1.027,1.503,1.736,2.641,1.897c17.368,2.473,30.481,17.569,30.481,35.112c0,19.58-15.937,35.509-35.52,35.509H97.391
+        v7.025h44.761c23.459,0,42.538-19.079,42.538-42.535C184.69,71.545,169.884,53.901,149.968,50.186z"/>
+      <path d="M108.586,90.201c1.406-1.403,1.406-3.672,0-5.075L88.541,65.078
+        c-0.701-0.698-1.614-1.045-2.534-1.045l-0.064,0.011c-0.018,0-0.036-0.011-0.054-0.011c-0.931,0-1.85,0.361-2.534,1.045
+        L63.31,85.127c-1.403,1.403-1.403,3.672,0,5.075c1.403,1.406,3.672,1.406,5.075,0L82.296,76.29v97.227
+        c0,1.99,1.603,3.597,3.593,3.597c1.979,0,3.59-1.607,3.59-3.597V76.165l14.033,14.036
+        C104.91,91.608,107.183,91.608,108.586,90.201z"/>
+    </svg>
+    Tải lên nhạc
+  </label>
+  <input type="file" id="musicFile" accept="audio/*">
+  <div id="filename">Chưa chọn file nào</div>
+
+  <button onclick="generate()">Tạo link + QR</button>
+
+  <div id="output"></div>
+  <div id="qrcode"></div>
+  <button onclick="copy()">Copy Link</button>
+  <button class="qr-download" onclick="downloadQR()">Tải QR xuống</button>
 
   <script>
-    const startBtn = document.getElementById('startButton');
-    const canvas = document.getElementById('stars');
-    const ctx = canvas.getContext('2d');
-    const music = document.getElementById('bgmusic');
-    let letters = ['♥', 'I Love You', '✨'];
-    music.src = "https://files.catbox.moe/vcjdqr.mp3";
-    const params = new URLSearchParams(location.search);
-    if (params.get("letters")) letters = params.get("letters").split(',');
-    if (params.get("music")) music.src = params.get("music");
+    document.getElementById("musicFile").addEventListener("change", function() {
+      const fileName = this.files[0]?.name || "Chưa chọn file nào";
+      document.getElementById("filename").textContent = "🎶 " + fileName;
+    });
 
-    function randomColor() {
-      const colors = ['#ff69b4', '#00ffff', '#ffff00', '#00ff00', '#ff6600', '#ffffff', '#ff00ff'];
-      return colors[Math.floor(Math.random() * colors.length)];
+    function generate() {
+      const lettersRaw = document.getElementById("letters").value;
+      const musicFile = document.getElementById("musicFile").files[0];
+      const page = "https://zatamod.github.io/Message/page.html";
+      const letters = lettersRaw.split(",").map(s => s.trim()).filter(Boolean);
+
+      if (musicFile) {
+        const formData = new FormData();
+        formData.append('fileToUpload', musicFile);
+        formData.append('reqtype', 'fileupload');
+
+        fetch("https://catbox.moe/user/api.php", {
+          method: "POST",
+          body: formData
+        })
+        .then(res => res.text())
+        .then(url => {
+          createLink(page, letters, url);
+        })
+        .catch(err => {
+          alert("Lỗi khi upload nhạc: " + err.message);
+        });
+      } else {
+        createLink(page, letters);
+      }
     }
 
-    function createFallingText() {
-      const text = document.createElement("div");
-      text.className = "falling-text";
-      text.style.left = Math.random() * window.innerWidth + "px";
-      text.style.animationDuration = (3 + Math.random() * 4) + "s";
-      const char = letters[Math.floor(Math.random() * letters.length)];
-      const color = randomColor();
-      text.textContent = char;
-      text.style.color = color;
-      text.style.textShadow = `0 0 8px ${color}, 0 0 15px ${color}`;
-      document.body.appendChild(text);
-      setTimeout(() => text.remove(), 8000);
-    }
+    function createLink(page, letters, music = "") {
+      let link = page;
+      const params = [];
 
-    function startStarAnimation() {
-      let w = canvas.width = window.innerWidth;
-      let h = canvas.height = window.innerHeight;
-      const stars = [];
-      for (let i = 0; i < 150; i++) {
-        stars.push({
-          x: Math.random() * w,
-          y: Math.random() * h,
-          r: Math.random() * 1.5 + 0.5,
-          dx: (Math.random() - 0.5) * 0.3,
-          dy: (Math.random() - 0.5) * 0.3
-        });
+      if (letters.length > 0) {
+        params.push("letters=" + encodeURIComponent(letters.join(",")));
+      }
+      if (music.trim()) {
+        params.push("music=" + encodeURIComponent(music));
       }
 
-      function animate() {
-        ctx.clearRect(0, 0, w, h);
-        ctx.fillStyle = "white";
-        stars.forEach(star => {
-          star.x += star.dx;
-          star.y += star.dy;
-          if (star.x < 0) star.x = w;
-          if (star.x > w) star.x = 0;
-          if (star.y < 0) star.y = h;
-          if (star.y > h) star.y = 0;
-          ctx.beginPath();
-          ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
-          ctx.fill();
-        });
-        requestAnimationFrame(animate);
+      if (params.length > 0) {
+        link += "?" + params.join("&");
       }
 
-      animate();
-      window.addEventListener('resize', () => {
-        w = canvas.width = window.innerWidth;
-        h = canvas.height = window.innerHeight;
+      document.getElementById("output").innerHTML =
+        `<strong>🔗 Link đã tạo:</strong><br><a href="${link}" target="_blank" style="color:#ff69b4">${link}</a>`;
+
+      // Tạo QR mới
+      const qrDiv = document.getElementById("qrcode");
+      qrDiv.innerHTML = "";
+      new QRCode(qrDiv, {
+        text: link,
+        width: 180,
+        height: 180,
+        colorDark: "#ff69b4",
+        colorLight: "#fff0f5",
+        correctLevel: QRCode.CorrectLevel.H
       });
     }
 
-    startBtn.onclick = () => {
-      startBtn.style.display = "none";
-      canvas.style.display = "block";
-      music.play();
-      startStarAnimation();
-      setInterval(createFallingText, 300);
-    };
+    function copy() {
+      const text = document.querySelector("#output a")?.href;
+      if (!text) return alert("Chưa có link để copy!");
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Đã copy link!");
+      });
+    }
+
+    function downloadQR() {
+      const qrCanvas = document.querySelector("#qrcode canvas");
+      if (!qrCanvas) return alert("Chưa có QR để tải!");
+      const link = document.createElement("a");
+      link.download = "QR-Cute.png";
+      link.href = qrCanvas.toDataURL("image/png");
+      link.click();
+    }
   </script>
 </body>
 </html>
