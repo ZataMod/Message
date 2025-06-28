@@ -157,7 +157,7 @@
         })
         .then(res => res.json())
         .then(data => {
-          createLink(page, letters, data.files[0].url);
+          createLink(page, letters, data.url);
         })
         .catch(err => {
           alert("Lỗi khi upload nhạc: " + err.message);
